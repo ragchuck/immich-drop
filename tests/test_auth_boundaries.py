@@ -9,7 +9,7 @@ PUBLIC = {
     ("GET", "/api/invite/{token}"), ("POST", "/api/invite/{token}/auth"), ("GET", "/invite/{token}"),
     ("POST", "/api/upload"), ("POST", "/api/upload/cancel"),
     ("POST", "/api/upload/chunk/init"), ("POST", "/api/upload/chunk"), ("POST", "/api/upload/chunk/complete"),
-    ("GET", "/favicon.ico"),
+    ("GET", "/favicon.ico"), ("GET", "/manifest.webmanifest"),
 }
 
 

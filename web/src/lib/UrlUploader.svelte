@@ -30,7 +30,22 @@
   const splitUrls = (s) => s.split(/[\n\s]+/).map((u) => u.trim()).filter(Boolean);
   const urlCount = $derived(splitUrls(input).length);
 
+  // PWA share target: the OS share sheet opens "/?title=&text=&url=". Fill the box with the links in it; the user confirms.
+  function prefillFromShare() {
+    const q = new URLSearchParams(location.search);
+    if (!['title', 'text', 'url'].some((k) => q.has(k))) return;
+    const found = [];
+    for (const k of ['url', 'text', 'title']) {
+      for (const m of (q.get(k) || '').matchAll(/https?:\/\/[^\s<>"']+/gi)) {
+        if (!found.includes(m[0])) found.push(m[0]);
+      }
+    }
+    if (found.length) input = found.join('\n');
+    history.replaceState(null, '', location.pathname); // a reload must not refill it
+  }
+
   onMount(async () => {
+    prefillFromShare();
     try {
       const { body } = await fetchJson('/api/supported-platforms');
       platforms = body.platforms || [];

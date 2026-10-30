@@ -171,3 +171,18 @@ def test_only_a_logged_in_page_can_reset_the_album_cache_via_websocket(client, l
     with client.websocket_connect("/ws") as ws:
         ws.send_text(json.dumps({"session_id": "cd34"}))
     assert m.ALBUM_IDS == {}
+
+
+def test_manifest_declares_share_target(client):
+    r = client.get("/manifest.webmanifest")
+    assert r.status_code == 200
+    assert r.headers["content-type"].startswith("application/manifest+json")
+    st = r.json()["share_target"]
+    assert st["method"] == "GET" and st["params"] == {"title": "title", "text": "text", "url": "url"}
+
+
+def test_share_before_login_is_carried_through_login(client):
+    r = client.get("/?url=https%3A%2F%2Fexample.com%2Fv&text=hi", follow_redirects=False)
+    assert r.status_code in (302, 307)
+    assert r.headers["location"].startswith("/login?share=")
+    assert "url%3Dhttps" in r.headers["location"]

@@ -15,6 +15,7 @@ import base64
 import binascii
 import io
 import json
+from urllib.parse import urlencode
 import hashlib
 import hmac
 import os
@@ -477,15 +478,50 @@ def _spa() -> HTMLResponse:
             html = (
                 html.replace('"/_app/', f'"{base}/_app/')
                 .replace('"/static/', f'"{base}/static/')
+                .replace('"/manifest.webmanifest', f'"{base}/manifest.webmanifest')
                 .replace('base: ""', f'base: "{base}"')
             )
         _SPA_HTML = html
     return HTMLResponse(_SPA_HTML, headers={"Cache-Control": "no-store"})
 
+_SHARE_PARAMS = ("title", "text", "url")
+
+@app.get("/manifest.webmanifest")
+async def web_manifest() -> Response:
+    """PWA manifest. `share_target` makes the installed app appear in the OS share sheet (Android/Chrome)."""
+    manifest = {
+        "name": "Immich Drop",
+        "short_name": "Immich Drop",
+        "start_url": _u("/"),
+        "scope": _u("/"),
+        "id": _u("/"),
+        "display": "standalone",
+        "background_color": "#ffffff",
+        "theme_color": "#4250af",
+        "icons": [
+            {"src": _u("/static/icon-192.png"), "sizes": "192x192", "type": "image/png", "purpose": "any"},
+            {"src": _u("/static/icon-512.png"), "sizes": "512x512", "type": "image/png", "purpose": "any"},
+        ],
+        "share_target": {
+            "action": _u("/"),
+            "method": "GET",
+            "params": {"title": "title", "text": "text", "url": "url"},
+        },
+    }
+    return Response(
+        content=json.dumps(manifest),
+        media_type="application/manifest+json",
+        headers={"Cache-Control": "no-cache"},
+    )
+
 @app.get("/", response_class=HTMLResponse)
 async def index(request: Request) -> HTMLResponse:
     """Owner upload page. Requires login."""
     if not request.session.get("accessToken"):
+        # Keep a shared link (PWA share target) through the login; the login page hands it back to "/"
+        if any(k in request.query_params for k in _SHARE_PARAMS):
+            share = urlencode({k: request.query_params[k] for k in _SHARE_PARAMS if k in request.query_params})
+            return RedirectResponse(url=_u("/login?" + urlencode({"share": share})))
         return RedirectResponse(url=_u("/login"))
     return _spa()
 
