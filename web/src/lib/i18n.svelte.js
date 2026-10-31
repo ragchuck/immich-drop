@@ -63,6 +63,7 @@ const en = {
   // home
   'home.save.title': 'Download from platforms',
   'home.save.desc': 'The server downloads the media and adds it to your Immich library.',
+  'home.shared.title': 'Shared files',
   'home.share.title': 'Create upload link',
   'home.links.title': 'Upload links',
   'home.links.desc': 'Anyone with the link or QR code can upload photos and videos without an Immich account.',
@@ -307,6 +308,7 @@ const de = {
 
   'home.save.title': 'Download von Plattformen',
   'home.save.desc': 'Der Server lädt die Medien herunter und legt sie in deiner Immich-Bibliothek ab.',
+  'home.shared.title': 'Geteilte Dateien',
   'home.share.title': 'Upload-Link erstellen',
   'home.links.title': 'Upload-Links',
   'home.links.desc': 'Wer den Link oder QR-Code hat, kann Fotos und Videos ohne Immich-Konto hochladen.',

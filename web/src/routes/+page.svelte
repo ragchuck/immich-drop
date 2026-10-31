@@ -5,6 +5,7 @@
   import CreateLinkModal from '$lib/CreateLinkModal.svelte';
   import ManageLinks from '$lib/ManageLinks.svelte';
   import UrlUploader from '$lib/UrlUploader.svelte';
+  import SharedFiles from '$lib/SharedFiles.svelte';
 
   let creating = $state(false);
   let highlight = $state(null);
@@ -24,6 +25,7 @@
 <svelte:head><title>Immich Drop</title></svelte:head>
 
 <AppShell owner size="giant">
+  <SharedFiles />
   <ManageLinks {highlight} {refreshKey} onNew={() => (creating = true)} />
   {#if config.loaded && config.social_media_uploads}
     <UrlUploader />

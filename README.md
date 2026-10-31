@@ -32,7 +32,7 @@
 
 - **Deep integration with Immich:** runs parallel to Immich, log in with your Immich account, and get the same look and feel, including dark mode
 - **Upload links for guests:** share a link or QR code, and anyone can upload photos and videos without an Immich account into your library or a target album. Limit links by number of uses or expiry date, protect them with a password, disable or delete them at any time, and see who uploaded what; includes duplicate detection and preserves original file metadata
-- **Download from platforms:** download content from TikTok, Instagram, Facebook, Reddit, YouTube, X/Twitter, and many more (via *yt-dlp* and *gallery-dl*) straight into your library. You can also use an [iOS shortcut](docs/ios-shortcuts.md) to send links more easily. On Android (Chrome), install Immich Drop as an app and it shows up in the share sheet: share a link to it and it is pre-filled in the download box
+- **Download from platforms:** download content from TikTok, Instagram, Facebook, Reddit, YouTube, X/Twitter, and many more (via *yt-dlp* and *gallery-dl*) straight into your library. You can also use an [iOS shortcut](docs/ios-shortcuts.md) to send links more easily. On Android (Chrome), install Immich Drop as an app and it shows up in the share sheet: share photos and videos to upload them to your library, or a link to pre-fill the download box
 
 ## Quick Start
 

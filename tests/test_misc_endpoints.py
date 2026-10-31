@@ -178,7 +178,20 @@ def test_manifest_declares_share_target(client):
     assert r.status_code == 200
     assert r.headers["content-type"].startswith("application/manifest+json")
     st = r.json()["share_target"]
-    assert st["method"] == "GET" and st["params"] == {"title": "title", "text": "text", "url": "url"}
+    assert st["method"] == "POST" and st["enctype"] == "multipart/form-data"
+    assert st["action"] == "/share-target"
+    assert st["params"]["files"] == [{"name": "media", "accept": ["image/*", "video/*"]}]
+
+
+def test_service_worker_is_served(client):
+    r = client.get("/sw.js")
+    assert r.status_code == 200 and "javascript" in r.headers["content-type"]
+    assert "share-target" in r.text
+
+
+def test_share_target_post_without_service_worker_opens_the_app(client):
+    r = client.post("/share-target", files={"media": ("a.jpg", b"x", "image/jpeg")}, follow_redirects=False)
+    assert r.status_code == 303 and r.headers["location"] == "/"
 
 
 def test_share_before_login_is_carried_through_login(client):

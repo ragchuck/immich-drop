@@ -484,7 +484,7 @@ def _spa() -> HTMLResponse:
         _SPA_HTML = html
     return HTMLResponse(_SPA_HTML, headers={"Cache-Control": "no-store"})
 
-_SHARE_PARAMS = ("title", "text", "url")
+_SHARE_PARAMS = ("title", "text", "url", "shared-files")
 
 @app.get("/manifest.webmanifest")
 async def web_manifest() -> Response:
@@ -503,9 +503,15 @@ async def web_manifest() -> Response:
             {"src": _u("/static/icon-512.png"), "sizes": "512x512", "type": "image/png", "purpose": "any"},
         ],
         "share_target": {
-            "action": _u("/"),
-            "method": "GET",
-            "params": {"title": "title", "text": "text", "url": "url"},
+            "action": _u("/share-target"),
+            "method": "POST",
+            "enctype": "multipart/form-data",
+            "params": {
+                "title": "title",
+                "text": "text",
+                "url": "url",
+                "files": [{"name": "media", "accept": ["image/*", "video/*"]}],
+            },
         },
     }
     return Response(
@@ -513,6 +519,19 @@ async def web_manifest() -> Response:
         media_type="application/manifest+json",
         headers={"Cache-Control": "no-cache"},
     )
+
+@app.get("/sw.js")
+async def service_worker() -> Response:
+    """Service worker that receives files from the share target. Served from the app root so its scope covers the app."""
+    with open(os.path.join(FRONTEND_DIR, "sw.js"), "rb") as f:
+        body = f.read()
+    return Response(content=body, media_type="text/javascript", headers={"Cache-Control": "no-cache"})
+
+@app.post("/share-target")
+async def share_target_fallback(request: Request) -> Response:
+    """Without the service worker (first share, or blocked) the shared files cannot be kept; open the app instead.
+    The body is not read."""
+    return RedirectResponse(url=_u("/"), status_code=303)
 
 @app.get("/", response_class=HTMLResponse)
 async def index(request: Request) -> HTMLResponse:
