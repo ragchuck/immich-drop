@@ -54,7 +54,9 @@
         errorKey = j.error === 'unauthorized' ? 'login.badCredentials' : j.error === 'too_many_attempts' ? 'login.tooMany' : 'login.failed';
         return;
       }
-      location.href = u('/');
+      // A link shared into the installed app before signing in: hand it back to the home page
+      const share = new URLSearchParams(location.search).get('share');
+      location.href = u('/') + (share ? '?' + share : '');
     } catch {
       errorKey = 'login.failed';
     } finally {

@@ -6,8 +6,8 @@
   import { t } from './i18n.svelte.js';
   import { UploadManager } from './upload-manager.svelte.js';
 
-  /** @type {{ inviteToken?: string|null, disabled?: boolean }} */
-  let { inviteToken = null, disabled = false } = $props();
+  /** @type {{ inviteToken?: string|null, disabled?: boolean, initialFiles?: File[] }} */
+  let { inviteToken = null, disabled = false, initialFiles = [] } = $props();
 
   // The invite token is fixed for the lifetime of the page.
   // svelte-ignore state_referenced_locally
@@ -20,6 +20,7 @@
   onMount(() => {
     isTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
     manager.start();
+    if (initialFiles.length) manager.addFiles(initialFiles);
     // iOS Safari: `capture` forces camera-only and hides the photo library. Keep it on Android only.
     if (fileInput) {
       if (/Android/i.test(navigator.userAgent || '')) fileInput.setAttribute('capture', 'environment');
